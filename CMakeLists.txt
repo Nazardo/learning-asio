@@ -32,4 +32,4 @@ add_compile_definitions(
     APP_VERSION_PATCH="${PROJECT_VERSION_PATCH}"
 )
 
-add_subdirectory(main)
+add_subdirectory(timer)
