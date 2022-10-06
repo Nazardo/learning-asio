@@ -92,8 +92,14 @@ int main(int argc, char** argv) {
 	try
 	{
 		asio::io_context io_context;
+
+		asio::signal_set signals(io_context, SIGINT, SIGTERM);
+		signals.async_wait([&](auto, auto) { io_context.stop(); });
+
 		tcp_server server(io_context, 13);
 		io_context.run();
+
+		std::cout << "Server closed gracefully" << std::endl;
 	}
 	catch (std::exception& e)
 	{
