@@ -2,21 +2,30 @@
 
 #include <asio.hpp>
 
-void timer_elapsed(const asio::error_code& /*e*/)
+void timer_elapsed(
+	const asio::error_code& /*e*/,
+	asio::steady_timer* t,
+	int* count)
 {
-    std::cout << "Timer elapsed" << std::endl;
+	if (*count < 5)
+	{
+		std::cout << *count << std::endl;
+		++(*count);
+		t->expires_at(t->expiry() + asio::chrono::seconds(1));
+		t->async_wait(std::bind(timer_elapsed, std::placeholders::_1, t, count));
+	}
 }
 
 int main(int argc, char** argv) {
-    std::cout << "Learning Asio " << APP_VERSION << std::endl;
+	std::cout << "Learning Asio " << APP_VERSION << std::endl;
 
-    asio::io_context io;
+	asio::io_context io;
 
-    // Create a timer to expire 5 seconds from now
-    asio::steady_timer t(io, asio::chrono::seconds(5));
-    t.async_wait(&timer_elapsed);
+	int count = 0;
+	asio::steady_timer t(io, asio::chrono::seconds(1));
+	t.async_wait(std::bind(timer_elapsed, std::placeholders::_1, &t, &count));
 
-    io.run();
-
-    return 0;
+	io.run();
+	std::cout << "Final count is " << count << std::endl;
+	return 0;
 }
