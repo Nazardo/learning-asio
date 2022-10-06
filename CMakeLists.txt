@@ -34,3 +34,4 @@ add_compile_definitions(
 
 add_subdirectory(timer)
 add_subdirectory(tcpclient)
+add_subdirectory(tcpserver)
